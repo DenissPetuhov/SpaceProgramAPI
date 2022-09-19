@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SpaceProgram.EFCore;
+using SpaceProgram.Model;
+using SpaceProgram.Model.Interfaces;
+using SpaceProgram.Model.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<EF_DataContext>(
     o=> o.UseNpgsql(builder.Configuration.GetConnectionString("Ef_postgres_Db"))
     );
-
-
+builder.Services.AddScoped<ISpaceObjectRepository, SpaceObjectRepository>();
+builder.Services.AddScoped<IBaseRepository<SpaceSystemModel>, SpaceSystemRepository>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 builder.Services.AddCors(options => options.AddPolicy(name: "SpaceSystemOrigin",
     policy =>
