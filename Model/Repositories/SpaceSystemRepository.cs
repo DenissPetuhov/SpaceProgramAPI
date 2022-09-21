@@ -31,13 +31,6 @@ namespace SpaceProgram.Model.Repositories
             List<SpaceSystemModel> spaceSystems = new List<SpaceSystemModel>();
             var dataList = _context.SpaceSystems.ToList();
             dataList.ForEach(row => spaceSystems.Add(_mapper.Map<SpaceSystemModel>(row)));
-            //    new SpaceSystemModel() упрощенно мапингом
-            //{
-            //    age = row.age,
-            //    name = row.name,
-            //    id = row.id,
-
-            //})
 
             return spaceSystems;
         }

@@ -31,17 +31,6 @@ namespace SpaceProgram.Model.Repositories
             List<SpaceObjectModel> spaceObjects = new List<SpaceObjectModel>();
             var dataList =  _context.SpaceObjects.ToList();
             dataList.ForEach(row => spaceObjects.Add(_mapper.Map<SpaceObjectModel>(row)));
-            //   new SpaceObjectModel()
-            //{
-            //    spaceSystem_id = row.spaceSystem_id, упрощенно мапингом
-            //    age = row.age,
-            //    diameter = row.diameter,
-            //    mass = row.mass,
-            //    name = row.name,
-            //    type = row.type,
-            //    id = row.id,
-
-            //}));
             return spaceObjects;
         }
 
@@ -58,26 +47,13 @@ namespace SpaceProgram.Model.Repositories
             List<SpaceObjectModel> spaceObjects = new List<SpaceObjectModel>();
             var dataList = _context.SpaceObjects.Where(i => i.spaceSystem_id.Equals(id)).ToList();
             dataList.ForEach(row => spaceObjects.Add(_mapper.Map<SpaceObjectModel>(row)));
-
-
-            //    new SpaceObjectModel() упрощенно мапингом
-            //{
-            //    spaceSystem_id = row.spaceSystem_id,
-            //    age = row.age,
-            //    diameter = row.diameter,
-            //    mass = row.mass,
-            //    name = row.name,
-            //    type = row.type,
-            //    id = row.id,
-
-            //}));
             return spaceObjects;
         }
 
         public void Save(SpaceObjectModel entity)
         {
             
-            if (entity.id > 0)// если ид больше нуля знаичит такая запись уже есть
+            if (entity.id > 0)
             {
                 var data = _context.SpaceObjects.Where(r => r.id.Equals(entity.id)).FirstOrDefault();
                 if (data != null)
