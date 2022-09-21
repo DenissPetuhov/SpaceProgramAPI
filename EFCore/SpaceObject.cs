@@ -7,7 +7,7 @@ namespace SpaceProgram.EFCore
     public class SpaceObject
     {   [Key,Required]
         public int id { get; set; }
-        public int SpaceSystemid { get; set; }
+        public int spaceSystem_id { get; set; }
         public int type { get; set; }
         public string name { get; set; } = string.Empty;
         public int age { get; set; }

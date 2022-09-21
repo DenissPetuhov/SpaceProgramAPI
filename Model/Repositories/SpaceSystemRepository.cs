@@ -26,7 +26,7 @@ namespace SpaceProgram.Model.Repositories
             }
         }
 
-        public IEnumerable<SpaceSystemModel> GetAll()
+        public List<SpaceSystemModel> GetAll()
         {
             List<SpaceSystemModel> spaceSystems = new List<SpaceSystemModel>();
             var dataList = _context.SpaceSystems.ToList();
@@ -47,34 +47,29 @@ namespace SpaceProgram.Model.Repositories
             var data = _context.SpaceSystems.Where(d => d.id.Equals(id)).FirstOrDefault();
             var system = _mapper.Map<SpaceSystemModel>(data);
             return system;
-            //    new SpaceSystemModel()   упрощенно мапингом
-            //{
-            //    age = data.age,
-            //    name = data.name,
-            //    id = data.id,
-
-            //};
+          
         }
 
         public void Save(SpaceSystemModel entity)
         {
-            SpaceSystem spaceSystem = new SpaceSystem();
-            if (entity.id > 0)// если ид больше нуля знаичит обновляем запись в бд
-            {
-                spaceSystem = _context.SpaceSystems.Where(r => r.id.Equals(entity.id)).FirstOrDefault();
-                if (spaceSystem != null)
-                {
-                    _mapper.Map<SpaceSystemModel>(spaceSystem);
-                    //spaceSystem.name = systemModel.name;
-                    //spaceSystem.age = systemModel.age;
 
+            if (entity.id > 0)
+            {
+                var data = _context.SpaceSystems.Where(r => r.id.Equals(entity.id)).FirstOrDefault();
+                if (data != null)
+                {
+                    //  data = _mapper.Map<SpaceSystem>(entity);
+                    data.name = entity.name;
+                    data.age = entity.age;
+                    _context.SpaceSystems.Update(data);
                 }
+
             }
             else
             {
-                _mapper.Map<SpaceSystemModel>(entity);
-                //spaceSystem.name = systemModel.name;
-                //spaceSystem.age = systemModel.age;
+                var spaceSystem = _mapper.Map<SpaceSystem>(entity);
+
+
                 _context.SpaceSystems.Add(spaceSystem);
             }
             _context.SaveChanges();

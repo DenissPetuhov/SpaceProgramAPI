@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SpaceProgram.EFCore;
+using SpaceProgram.Enum;
 using SpaceProgram.Model;
 using SpaceProgram.Model.Repositories;
+using SpaceProgram.Service.Intarface;
 
 namespace SpaceProgram.Controllers
 {
@@ -10,128 +12,88 @@ namespace SpaceProgram.Controllers
     {
         // GET: SpaceObjectController
 
-        private readonly SpaceObjectRepository _db;
-        public SpaceObjectController(EF_DataContext eF_DataContext, IMapper mapper)
+        private readonly ISpaceObjectService _spaceObjectService;
 
+        public SpaceObjectController(ISpaceObjectService spaceObjectService)
         {
-            _db = new SpaceObjectRepository(eF_DataContext, mapper);
-
+            _spaceObjectService = spaceObjectService;
         }
+
         //GET
         [HttpGet]
         [Route("api/[controller]/GetAllSpaceObjects")]
         public IActionResult GetAllSpaceObjects()
         {
-            ResponseType type = ResponseType.Success;
-            try
-            {
-                IEnumerable<SpaceObjectModel> data = _db.GetAll();
 
-                if (!data.Any())
-                {
-                    type = ResponseType.NotFound;
-                }
-                return Ok(ResponseHandler.GetApiResponse(type, data));
-            }
-            catch (Exception ex)
+            var response = _spaceObjectService.GetAll();
+            if (response.StatusCode == Enum.StatusCode.Success)
             {
-
-                type = ResponseType.Error;
-                return BadRequest(ResponseHandler.GetExeptionResponse(ex));
+                return base.Ok(response.ResponseData);
             }
+            return BadRequest(response);
         }
         [HttpGet]
         [Route("api/[controller]/GetSpaceObjectById/{id}")]
         public IActionResult GetSpaceObjectById(int id)
         {
-            ResponseType type = ResponseType.Success;
-            try
+            var response = _spaceObjectService.GetById(id);
+            if (response.StatusCode == Enum.StatusCode.Success)
             {
-                SpaceObjectModel data = _db.GetById(id);
-
-                if (data == null)
-                {
-                    type = ResponseType.NotFound;
-                }
-                return Ok(ResponseHandler.GetApiResponse(type, data));
+                return base.Ok(response.ResponseData);
             }
-            catch (Exception ex)
-            {
-
-                type = ResponseType.Error;
-                return BadRequest(ResponseHandler.GetExeptionResponse(ex));
-            }
+            return BadRequest(response);
         }
         [HttpGet]
         [Route("api/[controller]/GetSpaceObjectsBySpaceSystemId/{id}")]
         public IActionResult GetSpaceObjectsBySpaceSystemId(int id)
         {
-            ResponseType type = ResponseType.Success;
-            try
+            var response = _spaceObjectService.GetBySpaceSystemId(id);
+            if (response.StatusCode == Enum.StatusCode.Success)
             {
-                IEnumerable<SpaceObjectModel> data = _db.GetBySpaceSystemId(id);
+                return base.Ok(response.ResponseData);
 
-                if (!data.Any())
-                {
-                    type = ResponseType.NotFound;
-                }
-                return Ok(ResponseHandler.GetApiResponse(type, data));
             }
-            catch (Exception ex)
-            {
-
-                type = ResponseType.Error;
-                return BadRequest(ResponseHandler.GetExeptionResponse(ex));
-            }
+            return BadRequest(response);
         }
         // POST
         [HttpPost]
         [Route("api/[controller]/SaveSpaceObject")]
         public IActionResult PostSaveSpaceObject([FromBody] SpaceObjectModel objectModel)
         {
-            try
+            var response = _spaceObjectService.PostSave(objectModel);
+            if (response.StatusCode == Enum.StatusCode.Success)
             {
-                ResponseType type = ResponseType.Success;
-                _db.Save(objectModel);
-                return Ok(ResponseHandler.GetApiResponse(type, objectModel));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExeptionResponse(ex));
+                return base.Ok(response);
 
             }
+            return BadRequest(response);
         }
         //PUT 
         [HttpPut]
         [Route("api/[controller]/UpdateSpaceObject")]
         public IActionResult PutUpdateSpaceObject([FromBody] SpaceObjectModel objectModel)
         {
-            try
+            var response = _spaceObjectService.PutUpdate(objectModel);
+            if (response.StatusCode == Enum.StatusCode.Success)
             {
-                ResponseType type = ResponseType.Success;
-                _db.Save(objectModel);
-                return Ok(ResponseHandler.GetApiResponse(type, objectModel));
+                
+                return base.Ok(response);
+
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExeptionResponse(ex));
-            }
+            return BadRequest(response);
         }
         //DELETE 
         [HttpDelete]
         [Route("api/[controller]/DeleteSpaceObject/{id}")]
         public IActionResult DeleteSpaceObject(int id)
         {
-            try
+            var response = _spaceObjectService.Delete(id);
+            if (response.StatusCode == Enum.StatusCode.Success)
             {
-                ResponseType type = ResponseType.Success;
-                _db.Delete(id);
-                return Ok(ResponseHandler.GetApiResponse(type, "Delete Success"));
+                return base.Ok(response);
+
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExeptionResponse(ex));
-            }
+            return BadRequest(response);
         }
     }
 }

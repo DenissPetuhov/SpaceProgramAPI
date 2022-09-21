@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SpaceProgram.EFCore;
 using SpaceProgram.Model.Interfaces;
 
 namespace SpaceProgram.Model.Repositories
 {
-    public class SpaceObjectRepository : ISpaceObjectRepository
+    public class SpaceObjectRepository : ISpaceObjetcRepository
     {
         private EF_DataContext _context;
         private readonly IMapper _mapper;
@@ -16,22 +17,23 @@ namespace SpaceProgram.Model.Repositories
         }
         public void Delete(int id)
         {
-            var spaceObject = _context.SpaceObjects.Where(s => s.id.Equals(id)).FirstOrDefault();
+            var spaceObject  = _context.SpaceObjects.Where(s => s.id.Equals(id)).FirstOrDefault();
             if (spaceObject != null)
             {
                 _context.SpaceObjects.Remove(spaceObject);
                 _context.SaveChanges();
             }
+           
         }
 
-        public IEnumerable<SpaceObjectModel> GetAll()
+        public  List<SpaceObjectModel> GetAll()
         {
             List<SpaceObjectModel> spaceObjects = new List<SpaceObjectModel>();
-            var dataList = _context.SpaceObjects.ToList();
+            var dataList =  _context.SpaceObjects.ToList();
             dataList.ForEach(row => spaceObjects.Add(_mapper.Map<SpaceObjectModel>(row)));
             //   new SpaceObjectModel()
             //{
-            //    spaceSystem_id = row.SpaceSystemid, упрощенно мапингом
+            //    spaceSystem_id = row.spaceSystem_id, упрощенно мапингом
             //    age = row.age,
             //    diameter = row.diameter,
             //    mass = row.mass,
@@ -43,34 +45,24 @@ namespace SpaceProgram.Model.Repositories
             return spaceObjects;
         }
 
-        public SpaceObjectModel GetById(int id)
+        public  SpaceObjectModel GetById(int id)
         {
-            var data = _context.SpaceObjects.Where(i => i.id.Equals(id)).FirstOrDefault();
-            var spaceObject = _mapper.Map<SpaceObjectModel>(data);
+            var data =   _context.SpaceObjects.Where(i => i.id.Equals(id)).FirstOrDefault();
+            var spaceObject =  _mapper.Map<SpaceObjectModel>(data);
             return spaceObject;
-            // new SpaceObjectModel() упрощенно мапингом
-            //{
-            //    spaceSystem_id = data.SpaceSystemid,
-            //    age = data.age,
-            //    diameter = data.diameter,
-            //    mass = data.mass,
-            //    name = data.name,
-            //    type = data.type,
-            //    id = data.id,
-
-            //};
+         
         }
 
-        public IEnumerable<SpaceObjectModel> GetBySpaceSystemId(int id)
+        public List<SpaceObjectModel> GetBySpaceSystemId(int id)
         {
             List<SpaceObjectModel> spaceObjects = new List<SpaceObjectModel>();
-            var dataList = _context.SpaceObjects.Where(i => i.SpaceSystemid.Equals(id)).ToList();
+            var dataList = _context.SpaceObjects.Where(i => i.spaceSystem_id.Equals(id)).ToList();
             dataList.ForEach(row => spaceObjects.Add(_mapper.Map<SpaceObjectModel>(row)));
 
 
             //    new SpaceObjectModel() упрощенно мапингом
             //{
-            //    spaceSystem_id = row.SpaceSystemid,
+            //    spaceSystem_id = row.spaceSystem_id,
             //    age = row.age,
             //    diameter = row.diameter,
             //    mass = row.mass,
@@ -84,31 +76,28 @@ namespace SpaceProgram.Model.Repositories
 
         public void Save(SpaceObjectModel entity)
         {
-            SpaceObject spaceObject = new SpaceObject();
+            
             if (entity.id > 0)// если ид больше нуля знаичит такая запись уже есть
             {
-                spaceObject = _context.SpaceObjects.Where(r => r.id.Equals(entity.id)).FirstOrDefault();
-                if (spaceObject != null)
+                var data = _context.SpaceObjects.Where(r => r.id.Equals(entity.id)).FirstOrDefault();
+                if (data != null)
                 {
-                    _mapper.Map<SpaceObjectModel>(spaceObject);
-                    //spaceObject.name = objectModel.name;
-                    //spaceObject.type = objectModel.type;
-                    //spaceObject.age = objectModel.age;
-                    //spaceObject.diameter = objectModel.diameter;
-                    //spaceObject.mass = objectModel.mass;
+                    //  data = _mapper.Map<SpaceObject>(entity);
+                    data.name = entity.name;
+                    data.type = entity.type;
+                    data.age = entity.age;
+                    data.diameter = entity.diameter;
+                    data.mass = entity.mass;
+                    _context.SpaceObjects.Update(data);
                 }
-                else
-                {
-                    _mapper.Map<SpaceObjectModel>(spaceObject);
-                    //spaceObject.name = objectModel.name;
-                    //spaceObject.type = objectModel.type;
-                    //spaceObject.age = objectModel.age;
-                    //spaceObject.diameter = objectModel.diameter;
-                    //spaceObject.mass = objectModel.mass;
-                    //spaceObject.SpaceSystemid = objectModel.spaceSystem_id;
 
-                    _context.SpaceObjects.Add(spaceObject);
-                }
+            }
+            else
+            {
+                var spaceObject = _mapper.Map<SpaceObject>(entity);
+             
+
+                _context.SpaceObjects.Add(spaceObject);
             }
             _context.SaveChanges();
         }

@@ -16,7 +16,7 @@ namespace SpaceProgram.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("ProductVersion", "6.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -28,9 +28,6 @@ namespace SpaceProgram.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
-
-                    b.Property<int>("SpaceSystemid")
-                        .HasColumnType("integer");
 
                     b.Property<int>("age")
                         .HasColumnType("integer");
@@ -45,12 +42,13 @@ namespace SpaceProgram.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("spaceSystem_id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("type")
                         .HasColumnType("integer");
 
                     b.HasKey("id");
-
-                    b.HasIndex("SpaceSystemid");
 
                     b.ToTable("spaceObject");
                 });
@@ -73,17 +71,6 @@ namespace SpaceProgram.Migrations
                     b.HasKey("id");
 
                     b.ToTable("spaceSystem");
-                });
-
-            modelBuilder.Entity("SpaceProgram.EFCore.SpaceObject", b =>
-                {
-                    b.HasOne("SpaceProgram.EFCore.SpaceSystem", "SpaceSystem")
-                        .WithMany()
-                        .HasForeignKey("SpaceSystemid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SpaceSystem");
                 });
 #pragma warning restore 612, 618
         }
